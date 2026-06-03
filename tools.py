@@ -38,6 +38,44 @@ def web_search(query: str) -> str:
 
     return "\n -----\n".join(out) if out else str(results)
 
+@tool
+def extract_url_info(url: str) -> str:
+    """
+    Fetch the provided URL and extract useful page information using BeautifulSoup.
+    """
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
+    except Exception as exc:
+        return f"Error fetching URL {url}: {exc}"
+
+    soup = BeautifulSoup(response.text, "lxml")
+
+    title = soup.title.string.strip() if soup.title and soup.title.string else "(no title)"
+    description = ""
+    description_meta = soup.find("meta", attrs={"name": "description"})
+    if description_meta and description_meta.get("content"):
+        description = description_meta["content"].strip()
+    else:
+        description_meta = soup.find("meta", attrs={"property": "og:description"})
+        if description_meta and description_meta.get("content"):
+            description = description_meta["content"].strip()
+
+    paragraphs = [p.get_text(" ", strip=True) for p in soup.find_all("p") if p.get_text(strip=True)]
+    top_paragraphs = "\n\n".join(paragraphs[:5]) if paragraphs else "(no paragraph text found)"
+
+    return (
+        f"URL: {url}\n"
+        f"Title: {title}\n"
+        f"Description: {description or '(no description)'}\n\n"
+        f"Top Content:\n{top_paragraphs}"
+    )
+
 if __name__ == "__main__":
-    print(web_search.invoke("what is the present situation of job marker in IT sector in India?"))
+    print(web_search.invoke("what is the present situation of Inidan IT job market?"))
+    print("\n=== URL extractor test ===\n")
+    print(extract_url_info.invoke("https://www.qs.com/insights/us-and-indian-job-markets-most-prepared-for-future-of-work"))
     
