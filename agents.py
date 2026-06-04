@@ -1,6 +1,9 @@
 import os
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
+from langchain_mistralai import ChatMistralAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent 
 from tools import web_search, extract_url_info
@@ -10,20 +13,43 @@ from typing import List
 from enum import Enum
 load_dotenv()
 
-agent_llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0
-)
+def get_llm():
+    """Returns a prioritized fallback LLM stack based on strict priority: OpenAI -> Gemini -> Groq -> Mistral."""
+    llms = []
+    
+    # 1. OpenAI
+    if os.getenv("OPENAI_API_KEY"):
+        llms.append(ChatOpenAI(model="gpt-4o-mini", temperature=0))
+    
+    # 2. Gemini (Fallback if OpenAI fails or has no quota)
+    gemini_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if gemini_key:
+        llms.append(ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            temperature=0,
+            google_api_key=gemini_key
+        ))
+        
+    # 3. Groq (Fallback if Gemini fails)
+    if os.getenv("GROQ_API_KEY"):
+        llms.append(ChatGroq(model="llama-3.3-70b-versatile", temperature=0))
+        
+    # 4. Mistral (Fallback if Groq fails)
+    if os.getenv("MISTRAL_API_KEY"):
+        llms.append(ChatMistralAI(model="mistral-large-latest", temperature=0))
 
-writer_llm = ChatOpenAI(
-    model="gpt-4o",
-    temperature=0
-)
+    if not llms:
+        raise ValueError("No API keys found for OpenAI, Gemini, Groq, or Mistral.")
 
-critic_llm = ChatOpenAI(
-    model="gpt-4o",
-    temperature=0
-)
+    print(f"[SYSTEM] LLM Stack Initialized: {' -> '.join([type(l).__name__ for l in llms])}")
+    
+    primary = llms[0]
+    return primary.with_fallbacks(llms[1:]) if len(llms) > 1 else primary
+
+agent_llm = get_llm()
+writer_llm = get_llm()
+critic_llm = get_llm()
+
 class ConfidenceLevel(str, Enum):
     HIGH = "High"
     MEDIUM = "Medium"
@@ -70,6 +96,7 @@ Responsibilities:
 - Gather statistics and evidence
 - Avoid duplicate sources
 - Return concise findings
+- IMPORTANT: Always include the source URLs for every finding so they can be processed by follow-up agents.
 """
     )
 
@@ -122,41 +149,6 @@ Core Responsibilities:
 10. Never invent, assume, or infer facts not present in the provided information.
 11. If evidence is insufficient, explicitly acknowledge the limitation.
 12. Maintain objectivity, neutrality, and factual accuracy.
-13. Maximize information density while minimizing unnecessary verbosity.
-
-Reasoning Process:
-
-* Extract unique claims.
-* Group related findings into themes.
-* Remove duplication.
-* Evaluate evidence quality.
-* Resolve conflicts.
-* Identify key takeaways.
-* Produce a structured synthesis.
-
-Output Structure:
-
-## Executive Summary
-
-Provide a concise overview of the most important findings.
-
-## Key Findings
-
-Present the primary findings as bullet points.
-
-## Detailed Analysis
-
-Provide a structured synthesis of the evidence and findings.
-
-## Limitations / Uncertainties
-
-Include only when information is incomplete, conflicting, or insufficient.
-
-## Final Conclusion
-
-Present the most evidence-supported conclusion.
-
-The final report must be self-contained, factual, and understandable without access to the original research materials.
 """
 ),
 (
@@ -281,14 +273,6 @@ Review the research report below and evaluate it strictly.
 
 Research Report:
 {report}
-
-Evaluate the report according to the CritiqueReport schema.
-
-Requirements:
-- Be objective and highly critical.
-- Justify weaknesses clearly.
-- Do not inflate scores.
-- Only assign scores above 8 for exceptional reports.
 """
 )
     ]
@@ -324,3 +308,11 @@ critic_chain = (
     critic_prompt
     | structured_critic_llm
 )
+
+def build_writer_agent():
+    """Build the writer agent that synthesizes research findings into a structured report."""
+    return writer_chain
+
+def build_critic_agent():
+    """Build the critic agent that evaluates research report quality."""
+    return critic_chain
