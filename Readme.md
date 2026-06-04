@@ -13,8 +13,9 @@ Tech Stack
 Python, LangChain, OpenAI API, LangGraph (optional)
 
 Run:
-pip install -r requirements.txt
-python main.py
+1. pip install -r requirements.txt
+2. copy .env.example to .env and set OPENAI_API_KEY
+3. python agents.py
 
 License
 
