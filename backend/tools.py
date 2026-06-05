@@ -78,4 +78,3 @@ if __name__ == "__main__":
     print(web_search.invoke("what is the present situation of Inidan IT job market?"))
     print("\n=== URL extractor test ===\n")
     print(extract_url_info.invoke("https://www.qs.com/insights/us-and-indian-job-markets-most-prepared-for-future-of-work"))
-    

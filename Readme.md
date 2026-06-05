@@ -134,6 +134,12 @@ cd research-ai
 
 ## Backend Setup
 
+Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
 ### Create a Virtual Environment
 
 ```bash
