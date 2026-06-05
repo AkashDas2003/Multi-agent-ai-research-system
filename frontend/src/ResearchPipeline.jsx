@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-
+import "@tabler/icons-webfont/dist/tabler-icons.min.css";
 const PHASES = [
   { id: 1, key: "search", label: "Search", icon: "ti-search" },
   { id: 2, key: "extract", label: "Extract", icon: "ti-link" },
@@ -10,15 +10,38 @@ const PHASES = [
 
 function getTheme() {
   return {
-    bg: "#0F1117", surface: "#161B27", card: "#1C2333", border: "#2A3347",
-    text: "#E8EDF5", textSub: "#7A8BA8", textMuted: "#4A5978",
-    accent: "#3B82F6", accentBg: "#1E3A5F", accentText: "#93C5FD",
-    green: "#22C55E", greenBg: "#052E16",
-    amber: "#F59E0B", amberBg: "#2D1B00",
-    red: "#EF4444", redBg: "#2D0A0A",
-    purple: "#A78BFA", purpleBg: "#1E1040",
-    termBg: "#090D14", termText: "#4ADE80",
-    inputBg: "#111827",
+    bg: "#080B14",
+    surface: "rgba(17,24,39,0.75)",
+    card: "rgba(22,27,39,0.75)",
+    border: "rgba(255,255,255,0.08)",
+
+    text: "#F8FAFC",
+    textSub: "#CBD5E1",
+    textMuted: "#64748B",
+
+    accent: "#6366F1",
+    accent2: "#8B5CF6",
+    accent3: "#06B6D4",
+
+    accentBg: "rgba(99,102,241,0.15)",
+    accentText: "#C7D2FE",
+
+    green: "#22C55E",
+    greenBg: "rgba(34,197,94,0.12)",
+
+    amber: "#F59E0B",
+    amberBg: "rgba(245,158,11,0.12)",
+
+    red: "#EF4444",
+    redBg: "rgba(239,68,68,0.12)",
+
+    purple: "#A78BFA",
+    purpleBg: "rgba(167,139,250,0.12)",
+
+    termBg: "#050814",
+    termText: "#4ADE80",
+
+    inputBg: "rgba(255,255,255,0.04)",
   };
 }
 
@@ -674,7 +697,14 @@ export default function ResearchPipeline() {
     setExporting(false);
   };
 
-  const cardStyle = { background: tk.card, border: `1px solid ${tk.border}`, borderRadius: 14 };
+  const cardStyle = {
+  background: tk.card,
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+  border: `1px solid ${tk.border}`,
+  borderRadius: 22,
+  boxShadow: "0 12px 40px rgba(0,0,0,0.35)",
+};
   const tabBtn = (key) => ({
     padding: "8px 16px", fontSize: 13, fontWeight: 500,
     cursor: "pointer", borderRadius: 8, border: "none",
@@ -683,11 +713,41 @@ export default function ResearchPipeline() {
     transition: "all 0.2s", display: "flex", alignItems: "center", gap: 6,
   });
 
-  return (
-    <div style={{ minHeight: "100vh", background: tk.bg, color: tk.text, padding: "40px 0", fontFamily: "'Inter', system-ui, sans-serif", transition: "background 0.3s" }}>
-      <style>{`
+
+ return (
+  <div
+    style={{
+      minHeight: "100vh",
+      background: tk.bg,
+      fontFamily: "Inter, sans-serif",
+      color: tk.text,
+    }}
+  >
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        pointerEvents: "none",
+        background: `
+          radial-gradient(circle at 15% 15%, rgba(99,102,241,.18), transparent 30%),
+          radial-gradient(circle at 85% 15%, rgba(139,92,246,.15), transparent 30%),
+          radial-gradient(circle at 50% 85%, rgba(6,182,212,.12), transparent 35%)
+        `,
+      }}
+    />
+
+    {/* Navbar */}
+    ...
+    <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        html, body { margin: 0; padding: 0; background: ${tk.bg}; }
+        html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: ${tk.bg};
+  overflow-x: hidden;
+}
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
         @keyframes spin { to{transform:rotate(360deg)} }
@@ -736,12 +796,61 @@ export default function ResearchPipeline() {
 
       {/* Body */}
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 80px" }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 600, color: tk.text }}>Multi-Agent Research Pipeline</h1>
-          <p style={{ margin: 0, fontSize: 14, color: tk.textSub }}>
-            Autonomous 5-phase system: parallel web scraping, deep analysis, structured reporting, and quality critique.
-          </p>
-        </div>
+       <div
+  style={{
+    textAlign: "center",
+    marginBottom: 40,
+  }}
+>
+  <div
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      padding: "8px 14px",
+      borderRadius: 999,
+      background: tk.accentBg,
+      color: tk.accentText,
+      marginBottom: 18,
+      border: `1px solid ${tk.border}`,
+    }}
+  >
+    <i className="ti ti-sparkles" />
+    AI-Powered Research Platform
+  </div>
+
+  <h1
+    style={{
+      margin: 0,
+      fontSize: 56,
+      fontWeight: 700,
+      lineHeight: 1.1,
+      background:
+        "linear-gradient(135deg,#FFFFFF,#C7D2FE,#8B5CF6)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+    }}
+  >
+    Research Smarter.
+    <br />
+    Not Harder.
+  </h1>
+
+  <p
+    style={{
+      marginTop: 18,
+      fontSize: 18,
+      color: tk.textSub,
+      maxWidth: 700,
+      marginInline: "auto",
+      lineHeight: 1.7,
+    }}
+  >
+    Autonomous multi-agent workflow for search,
+    extraction, deep research, report generation,
+    and quality evaluation.
+  </p>
+</div>
 
         {/* Input */}
         <div style={{ ...cardStyle, padding: "20px 24px", marginBottom: 20 }}>
