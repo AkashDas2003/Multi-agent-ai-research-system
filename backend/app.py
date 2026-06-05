@@ -7,10 +7,14 @@ import os
 app = FastAPI()
 
 # Support both local development and production URLs
-origins = [
-    "http://localhost:5173",
-    os.getenv("FRONTEND_URL", "*") 
-]
+frontend_url = os.getenv("FRONTEND_URL")
+
+if frontend_url:
+    # Clean the URL to ensure no trailing slash, which can cause CORS failures
+    frontend_url = frontend_url.rstrip("/")
+    origins = [frontend_url, "http://localhost:5173"]
+else:
+    origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
