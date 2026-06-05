@@ -764,7 +764,7 @@ export default function ResearchPipeline() {
           <div style={{ width: 30, height: 30, borderRadius: 8, background: tk.accentBg, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <i className="ti ti-brain" style={{ fontSize: 16, color: tk.accent }} />
           </div>
-          <span style={{ fontSize: 15, fontWeight: 600, color: tk.text }}>ResearchAI</span>
+          <span style={{ fontSize: 15, fontWeight: 600, color: tk.text }}>Omni Research</span>
           <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 5, background: tk.purpleBg, color: tk.purple, letterSpacing: "0.05em" }}>MULTI-AGENT</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
