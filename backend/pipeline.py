@@ -178,7 +178,6 @@ def run_research_pipeline(topic: str):
     )
 
     # Extract critique and provider metadata
-   # ✅ REPLACE WITH THIS:
     critic_results = critic_output
 
     state["critique"] = critic_results

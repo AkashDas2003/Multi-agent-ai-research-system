@@ -659,7 +659,9 @@ export default function ResearchPipeline() {
       await delay(800);  setPhase(2); addLog("PHASE 2 — EXTRACT: Finding URLs...");
       await delay(800);  setPhase(3); addLog("PHASE 3 — DEEP RESEARCH: Scraping content...");
       addLog("[SYSTEM] Waiting for backend response (this may take 30–60s)...");
-      const response = await fetch("http://localhost:8000/research", {
+      // This will use the Render URL in production and fallback to localhost for dev
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_BASE_URL}/research`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic: t }),
