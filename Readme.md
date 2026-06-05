@@ -125,7 +125,7 @@ Research Agent
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/research-ai.git
+git clone https://github.com/AkashDas2003/Multi-agent-ai-research-system
 
 cd research-ai
 ```
